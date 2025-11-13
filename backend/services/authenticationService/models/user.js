@@ -11,20 +11,23 @@ const userSchema = new mongoose.Schema({
         unique: true,
     },
     password: {
-        type: String,
-        required: false,    
+        type: String,   
     },
     googleId: {
         type: String,
+        required: false
     },
 
     photo: {
         type: String,
     },
+    googleAccessToken: {
+        type: String,
+    }
 
 
 });
 
-const user = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema, 'users');
 
-module.exports = user;
+module.exports = User;

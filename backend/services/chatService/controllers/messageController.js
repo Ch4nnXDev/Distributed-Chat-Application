@@ -25,14 +25,6 @@ const getMessages = async (req, res) => {
       }
 }
 
-const handleMessages = (io, socket) => {
-    socket.on('chat_message', async (msg) => {
-        console.log("Received message:", msg);
-        await saveMessage(msg, socket.id); // Save the message to the database
-        io.emit('chat_message', msg); // Broadcast the message to all connected clients
-    });
-};
-
 module.exports = {
     getMessages,
     handleMessages,
