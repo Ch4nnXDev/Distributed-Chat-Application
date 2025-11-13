@@ -1,5 +1,5 @@
-import ChatHead from "./deafult/chatHead";
-import ChatWindow from "./deafult/chatWindow";
+import ChatHead from "./default/chatHead";
+import ChatWindow from "./default/chatWindow";
 export default function chatLayout() {
     return (
         <section className="flex flex-col h-screen">
