@@ -1,20 +1,26 @@
 import { useEffect, useState } from 'react';
-import { Box } from 'lucide-react'
+import Card from "../contactCard.tsx"
 export default function Home() {
-    const [Peers, setPeers] = useState();
+    const [Peers, setPeers] = useState([]);
     return (
         <section className="flex flex-col bg-red-500 w-full">
             <div className="flex flex-row bg-green-500 w-full p-10">
-                <form>
-                    <label type="text" id="search" for="search">
-                        <Box />
+                <form className="flex flex-col bg-red-400">
+                    <label>
+                        Search
                     </label>
-                    <input>
+                    <input type='text'>
+
+                    </input>
+
                 </form>
 
                 
             </div>
-            <div>
+            <div className="flex flex-col">
+                <Card />
+
+                
 
             </div>
 
