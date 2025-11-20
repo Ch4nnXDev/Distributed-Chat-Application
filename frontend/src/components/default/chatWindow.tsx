@@ -27,10 +27,21 @@ export default function ChatWindow(){
     const [input, setInput] = useState("");
     const socketRef = useRef<ReturnType<typeof io> | null>(null);
 
+       function getCookie(name: string) {
+        return document.cookie
+            .split("; ")
+            .find(row => row.startsWith(name + "="))
+            ?.split("=")[1];
+        }
+
+        const token = getCookie("token");
+
+
     useEffect(() => {
         socketRef.current = io("http://localhost:8080", {
             path: "/chat/socket.io",
             withCredentials: true,
+            extraHeaders: { Authorization: `Bearer ${token}` },
             transports: ["websocket"]
         });
 
@@ -44,7 +55,7 @@ export default function ChatWindow(){
                 socketRef.current.disconnect(); // Clean up the socket connection on unmount
             }
         }; // Connect to the socket server
-    }, []);
+    }, [token]);
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -64,6 +75,8 @@ export default function ChatWindow(){
     useEffect(() => {
         console.log("Messages updated:", messages);
     }, [messages]);
+
+ 
 
 
 

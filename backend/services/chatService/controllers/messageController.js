@@ -1,7 +1,5 @@
 const message = require('../models/messageModel');
 
-
-
 const saveMessage = async (text, sender) => {
     try {
         const newMessage = new message({text , sender});
@@ -27,6 +25,5 @@ const getMessages = async (req, res) => {
 
 module.exports = {
     getMessages,
-    handleMessages,
     saveMessage
 };

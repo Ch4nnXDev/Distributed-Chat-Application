@@ -11,6 +11,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const express = require('express');
 dotenv.config();
 const app = express();
+app.use(express.json());
 app.use(cookieParser());
 connectDB();
 
@@ -98,6 +99,13 @@ app.get("/check", (req, res) => {
     res.json({loggedIn: false})
   }
 
+})
+
+app.get("/refresh", (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    
+  }
 })
   
 app.listen(4000, () => console.log('Auth Service running on http://localhost:4000'));

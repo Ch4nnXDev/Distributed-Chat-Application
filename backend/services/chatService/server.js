@@ -5,10 +5,10 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const connectDB = require('./db/db.js'); // your DB connection module
-const messageRoutes = require('./routes/messageRoutes'); // your REST API routes
+const connectDB = require('./db/db.js'); 
+const messageRoutes = require('./routes/messageRoutes'); 
 const { saveMessage } = require('./controllers/messageController');
-const startConsumer  = require('./kafka/consumer'); // your Kafka consumer module
+const startConsumer  = require('./kafka/consumer'); 
 const { topic, CHAT_MESSAGES } = require('./kafka/topics');
 const { sendMessage } = require('./kafka/producer.js');
 
