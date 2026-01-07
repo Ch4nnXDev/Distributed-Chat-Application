@@ -10,7 +10,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const { saveMessage } = require('./controllers/messageController');
 const startConsumer  = require('./kafka/consumer'); 
 const { topic, CHAT_MESSAGES } = require('./kafka/topics');
-const { sendMessage } = require('./kafka/producer.js');
+const { sendMessage, connectProducer } = require('./kafka/producer.js');
 
 
 dotenv.config();
@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 
 // Connect to Database
 connectDB();
-
+connectProducer();
 // Routes
 app.use('/api', messageRoutes);
 
@@ -77,15 +77,11 @@ io.on('connection', (socket) => {
       text: msg.text,
       senderId: socket.user.id,
       senderEmail: socket.user.email,
-      createdAt: new Date().toISOString()
       };
 
-      await saveMessage(fullMessage);
-      await sendMessage(CHAT_MESSAGES, fullMessage);
-      await producer.send({
-        topic: 'chat-room-abc',
-        messages: [{ value: JSON.stringify(fullMessage) }]
-      });
+      const savedMessage = await saveMessage(fullMessage);
+      socket.broadcast.emit('chat_message', savedMessage);
+      await sendMessage(CHAT_MESSAGES, savedMessage);
       console.log("Received msg from client:", msg);
       
     } catch (err) {
@@ -104,7 +100,7 @@ io.on('connection', (socket) => {
 startConsumer('chat-room-abc', async (msg) => {
 
 
-  io.emit('chat_message', fullMessage);
+  io.emit('chat_message', msg);
 });
 
 

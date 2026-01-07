@@ -15,13 +15,10 @@ export default function ChatWindow(){
 
     };
 
-    type User = {
-        email: string;
 
-    }
 
     const [messages, setMessages] = useState<Message[]>([]);
-    const [currentUser, setCurrentUser] = useState<User[]>([]);
+
 
 
     const [input, setInput] = useState("");
@@ -34,10 +31,12 @@ export default function ChatWindow(){
             ?.split("=")[1];
         }
 
-        const token = getCookie("token");
+        
 
 
     useEffect(() => {
+
+        const token = getCookie("token");
         socketRef.current = io("http://localhost:8080", {
             path: "/chat/socket.io",
             withCredentials: true,
@@ -50,12 +49,25 @@ export default function ChatWindow(){
 
         })
 
+        socketRef.current.on("reconnect_attempt", () => {
+            const token = getCookie("token");
+            const socket = socketRef.current;
+            if (socket) {
+                socket.io.opts.extraHeaders = {
+                Authorization: `Bearer ${token}`,
+                };
+
+            }
+           
+        });
+
+
         return () => {
             if (socketRef.current) { //if statement is needed because socketRef.current can be null 
                 socketRef.current.disconnect(); // Clean up the socket connection on unmount
             }
         }; // Connect to the socket server
-    }, [token]);
+    }, []);
 
     useEffect(() => {
         const fetchMessages = async () => {

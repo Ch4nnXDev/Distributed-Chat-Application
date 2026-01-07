@@ -1,8 +1,12 @@
 const message = require('../models/messageModel');
 
-const saveMessage = async (text, sender) => {
+const saveMessage = async (msg) => {
     try {
-        const newMessage = new message({text , sender});
+          const newMessage = new message({
+            text: msg.text,
+            senderId: msg.senderId,
+            senderEmail: msg.senderEmail
+        });
         const saved = await newMessage.save();
         console.log("Saved message to DB:", saved);
         return saved;
