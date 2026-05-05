@@ -9,7 +9,7 @@ const saveMessage = async (username, password, googleId) => {
         return savedUser;
     } catch (error) {
         console.error("Error saving user:", error);
-        throw error; // Re-throw the error for further handling
+        throw error; 
     }
 
 }
@@ -26,6 +26,7 @@ const getUser = async(googleId) => {
         throws(error);  
     }
 }
+
 
 module.exports = {
     saveMessage,

@@ -9,7 +9,7 @@ export default function HomePage() {
     const [user, setUser] = useState([]);
 
     function findUsers() {
-        axios.get()
+        
         
 
     }

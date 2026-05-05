@@ -8,9 +8,9 @@ const dotenv = require('dotenv');
 const connectDB = require('./db/db.js'); 
 const messageRoutes = require('./routes/messageRoutes'); 
 const { saveMessage } = require('./controllers/messageController');
-const startConsumer  = require('./kafka/consumer'); 
 const { topic, CHAT_MESSAGES } = require('./kafka/topics');
 const { sendMessage, connectProducer } = require('./kafka/producer.js');
+const cookie = require('cookie');
 
 
 dotenv.config();
@@ -53,11 +53,13 @@ const io = socketIo(server, {
 });
 
 io.use((socket, next) => {
-  const token = socket.handshake.headers.authorization?.split(" ")[1];
+  const parsedCookie = cookie.parse(socket.handshake.headers.cookie || '');
+  const token = parsedCookie.token;
   console.log("ok", token)
   if (!token) return next(new Error("No token"));
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded Token:", decoded);
     socket.user = decoded; 
     next();
   } catch (err) {
@@ -80,7 +82,10 @@ io.on('connection', (socket) => {
       };
 
       const savedMessage = await saveMessage(fullMessage);
-      socket.broadcast.emit('chat_message', savedMessage);
+      io.emit('chat_message', savedMessage);
+
+      
+      console.log("Saved Message:", savedMessage);
       await sendMessage(CHAT_MESSAGES, savedMessage);
       console.log("Received msg from client:", msg);
       
@@ -94,13 +99,6 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
-});
-
-
-startConsumer('chat-room-abc', async (msg) => {
-
-
-  io.emit('chat_message', msg);
 });
 
 

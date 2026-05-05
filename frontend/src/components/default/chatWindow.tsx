@@ -5,9 +5,6 @@ import axios from "axios";
 export default function ChatWindow(){
 
     type Message = {
-
-
-
         text: string;  
         senderId: string;
         senderEmail?: string;
@@ -15,32 +12,23 @@ export default function ChatWindow(){
 
     };
 
+    
+
 
 
     const [messages, setMessages] = useState<Message[]>([]);
-
-
-
     const [input, setInput] = useState("");
     const socketRef = useRef<ReturnType<typeof io> | null>(null);
-
-       function getCookie(name: string) {
-        return document.cookie
-            .split("; ")
-            .find(row => row.startsWith(name + "="))
-            ?.split("=")[1];
-        }
+    
+    
 
         
-
-
     useEffect(() => {
 
-        const token = getCookie("token");
         socketRef.current = io("http://localhost:8080", {
             path: "/chat/socket.io",
             withCredentials: true,
-            extraHeaders: { Authorization: `Bearer ${token}` },
+           
             transports: ["websocket"]
         });
 
@@ -48,18 +36,6 @@ export default function ChatWindow(){
             setMessages((prevMessages) => [...prevMessages, msg]); // Update messages state with new message
 
         })
-
-        socketRef.current.on("reconnect_attempt", () => {
-            const token = getCookie("token");
-            const socket = socketRef.current;
-            if (socket) {
-                socket.io.opts.extraHeaders = {
-                Authorization: `Bearer ${token}`,
-                };
-
-            }
-           
-        });
 
 
         return () => {
@@ -107,16 +83,23 @@ export default function ChatWindow(){
         setInput(""); //this clears the input field after submitting
     }
 
+    setCurrentUser(socketRef.senderId)
+
     return (
         <section className="flex flex-col p-4 bg-gray-100 h-screen w-full overflow-hidden ">
             <div className="flex flex-col overflow-y-auto flex-1 space-y-4">
-                {messages.map((message, index) => (
+                {messages.map((message, index) => {
+                    // Check if the message was sent by the current user
+                    return (
+
+                        <div key={index} className="p-2 bg-white rounded shadow w-60">
+                            <strong>{message.senderEmail}:</strong> {message.text}
+                            <div className="text-xs text-gray-500">{message.createdAt ? new Date(message.createdAt).toLocaleString() : ''}</div>
+                        </div>
+
+                    )
                     
-                    <div key={index} className="p-2 bg-white rounded shadow w-60">
-                        <strong>{message.senderEmail}:</strong> {message.text}
-                        <div className="text-xs text-gray-500">{message.createdAt ? new Date(message.createdAt).toLocaleString() : ''}</div>
-                    </div>
-                ))}
+                })}
             </div>
             <form onSubmit={handleSubmit} className="flex items-center">
                 <input className="flex-1 p-2 border border-gray-300 rounded" type="text" value={input} onChange={(e) => setInput(e.target.value)} />
