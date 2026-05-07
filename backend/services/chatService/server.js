@@ -1,5 +1,5 @@
 const express = require('express');
-const http = require('http');
+const http = require('http');                                                //The Connection happens first and then the token verification happens on the retry so there is a problem in my setup.
 const socketIo = require('socket.io');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -17,7 +17,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4001;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';  
 
 // Middleware
 app.use(cors({
@@ -37,7 +37,20 @@ connectProducer();
 // Routes
 app.use('/api', messageRoutes);
 
+app.get('/auth/me', (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ error: "No token provided"});
+  }
 
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  res.json({
+    id: decoded.id,
+    email: decoded.email
+  });
+  
+
+});
 
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -60,7 +73,10 @@ io.use((socket, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Decoded Token:", decoded);
-    socket.user = decoded; 
+    socket.user = {
+      id: decoded.id, 
+      email: decoded.email
+    }; 
     next();
   } catch (err) {
     next(new Error("Invalid token"));
