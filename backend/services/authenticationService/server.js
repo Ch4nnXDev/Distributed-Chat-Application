@@ -74,6 +74,15 @@ app.post('/signup', async(req, res)=> {
 
 }) 
 
+app.post('/logout', (req, res)=> {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax"
+  });
+  res.json({message: "Logged out"});
+})
+
 app.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/google/callback',
@@ -86,26 +95,5 @@ app.get('/google/callback',
 
     }
 );
-  
-app.get('/failure', (req, res) => {
-    res.send('Failed to authenticate.');
-});
-
-app.get("/check", (req, res) => {
-  const token = req.cookies.token;
-  if (token) {
-    res.json({loggedIn: true})
-  } else {
-    res.json({loggedIn: false})
-  }
-
-})
-
-app.get("/refresh", (req, res) => {
-  const token = req.cookies.token;
-  if (!token) {
-    
-  }
-})
   
 app.listen(4000, () => console.log('Auth Service running on http://localhost:4000'));

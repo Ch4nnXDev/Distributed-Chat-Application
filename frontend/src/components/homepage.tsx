@@ -1,18 +1,30 @@
 import ChatHead from "./default/chatHead";
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
+
+
+
+
 export default function HomePage() {
+    
+    
+    const navigate = useNavigate();
 
 
-
-    const [input, setInput] = useState("")
-    const [user, setUser] = useState([]);
-
-    function findUsers() {
+    const logOut = async () => {
         
         
+        axios.post("http://localhost:8080/auth/logout",
+            {withCredentials: true},
+
+        )
+        return navigate("/search");
 
     }
+
+
+
     return (
         <section>
             <ChatHead />
@@ -26,6 +38,7 @@ export default function HomePage() {
                 
 
             </div>
+            <button onClick={logOut}>Log Out</button>
             <div>
                 
             </div>
