@@ -11,9 +11,8 @@ export default function HomePage() {
     
     const navigate = useNavigate();
 
-
+    
     const logOut = async () => {
-        
         
         axios.post("http://localhost:8080/auth/logout",
             {withCredentials: true},

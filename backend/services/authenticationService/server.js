@@ -6,15 +6,18 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const bcrypt = require('bcryptjs')
+const router = require('./routes/routes.js');
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const express = require('express');
 dotenv.config();
 const app = express();
+app.use(router);
 app.use(express.json());
 app.use(cookieParser());
 connectDB();
-
+const userRoutes = require('./routes/routes.js');
+app.use('/user', userRoutes);
 app.use(passport.initialize());
 
 
@@ -86,7 +89,7 @@ app.post('/logout', (req, res)=> {
 app.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/google/callback',
-    passport.authenticate('google', { session: false, failureRedirect: '/auth/failure' }),
+    passport.authenticate('google', { session: false, failureRedirect: '/login' }),
     (req, res) => {
       const token = jwt.sign({ id: req.user._id, email: req.user.email }, process.env.JWT_SECRET, { expiresIn: '1d' });
       res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax",

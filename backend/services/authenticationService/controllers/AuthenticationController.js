@@ -27,6 +27,20 @@ const getUser = async(googleId) => {
     }
 }
 
+const getAllUsers = async() => {
+    try {
+        const users = await user.find({});
+        if (!users) {
+            throw new Error("No users found");
+        }
+        return users;
+
+    } catch (error) {
+        console.log("Error fetching users:", error);
+        throws(error);
+
+    }
+}
 
 module.exports = {
     saveMessage,

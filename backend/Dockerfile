@@ -1,9 +1,13 @@
-FROM node: 20
-WORKDIR /app
+#Base image
+FROM node:20
+# create app directory
+WORKDIR /backend
+# copy all the packages
 COPY package*.json ./
+# install dependencies
 RUN npm install
+# copy all the files
 COPY . .
-EXPOSE 5173
-CMD ["npm", "run", "dev"]
-EXPOSE 3000
 
+#run
+CMD ["npm", "start"]

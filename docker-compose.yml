@@ -1,14 +1,8 @@
 version: "3.9"
 services:
-  frontend:
-    build: ./frontend
-    ports: 
-      - "5173:5173"
-    depends_on:
-      - api-gateway
-    
   api-gateway:
-    build: ./backend/api-gateway
+    build: ./backend
+    command: node api-gateway/server.js
     ports:
       - "8080:8080"
     depends_on:
@@ -16,14 +10,49 @@ services:
       - chatservice
     
   authenticationservice:
-    build: ./backend/services/authenticationService
+    build: ./backend
+    command: node authenticationService/server.js
     ports:
       - "4000:4000"
+    depends_on:
+      - mongodb
+      
     
   chatservice:
-    build: ./backend/services/chatService
+    build: ./backend
+    command: node chatService/server.js
     ports:
-      - "4001:4000"
+      - "4001:4001"
+    depends_on:
+      - mongodb
+  
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports: 
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    
+
+volumes:
+  mongo-data:
     
 
 
