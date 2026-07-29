@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
 
 export default function SignUp() {
   const [user, setUser] = useState({ email: "", password: "" });
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     if (user.email && user.password) {

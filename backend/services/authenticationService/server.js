@@ -6,17 +6,16 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const bcrypt = require('bcryptjs')
-const router = require('./routes/routes.js');
+const userRoutes = require('./routes/routes.js');
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const express = require('express');
 dotenv.config();
 const app = express();
-app.use(router);
+
 app.use(express.json());
 app.use(cookieParser());
 connectDB();
-const userRoutes = require('./routes/routes.js');
 app.use('/user', userRoutes);
 app.use(passport.initialize());
 

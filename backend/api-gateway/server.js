@@ -21,7 +21,7 @@ app.get('/', (req, res) => res.send('API Gateway running ✅'));
 
 // ---- AUTH SERVICE ----
 app.use('/auth', createProxyMiddleware({
-  target: 'http://localhost:4000',
+  target: 'http://authenticationservice:4000',
   changeOrigin: true,
   pathRewrite: { '^/auth': '' },
   onProxyReq: (proxyReq, req) => {
@@ -33,7 +33,7 @@ app.use('/auth', createProxyMiddleware({
 
 // ---- CHAT SERVICE ----
 const chatProxy = createProxyMiddleware({
-  target: 'http://localhost:4001',
+  target: 'http://chatservice:4001',
   changeOrigin: true,
   ws: true,
   pathRewrite: { '^/chat': '' },
