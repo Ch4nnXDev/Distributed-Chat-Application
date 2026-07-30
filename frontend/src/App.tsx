@@ -1,9 +1,11 @@
-import ChatLayout from "./components/chatLayout"
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
-import SignUp from "./components/default/Signup"
-import Home from "./components/default/home"
-import authStore from "./stores/authStore"
-import { useEffect } from "react"
+import ChatLayout from "./components/chatLayout";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import SignUp from "./components/default/Signup";
+import Home from "./components/default/home";
+import authStore from "./stores/authStore";
+import Profile from "./components/profile";
+
+import { useEffect } from "react";
 
 
 function App() {
@@ -21,6 +23,7 @@ function App() {
         <Route path="/chat" element={<ChatLayout />} />
         <Route path="/" element={<SignUp />} />
         <Route path="/search" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
         
       </Routes>
     </Router>
