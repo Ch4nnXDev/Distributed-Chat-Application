@@ -93,7 +93,7 @@ app.get('/google/callback',
       const token = jwt.sign({ id: req.user._id, email: req.user.email }, process.env.JWT_SECRET, { expiresIn: '1d' });
       res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax",
             maxAge: 60 * 60 * 1000 });
-      res.redirect(`http://localhost:5173/chat`);
+      res.redirect(`http://localhost:5173/search`);
 
     }
 );
