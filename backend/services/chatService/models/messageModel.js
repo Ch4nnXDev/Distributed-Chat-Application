@@ -1,6 +1,6 @@
-const { required } = require('@hapi/joi');
+const Joi = require('@hapi/joi');
 const mongoose = require('mongoose');
-const { type } = require('node:os');
+
 
 const messageSchema = new mongoose.Schema({
     text: {
