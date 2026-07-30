@@ -1,3 +1,3 @@
 module.exports = {
-  CHAT_MESSAGES: 'chat-room-abc',
+  CHAT_MESSAGES: 'chat-events',
 };
