@@ -1,9 +1,24 @@
 import { useState } from 'react';
 import Card from "../contactCard.tsx";
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const [Peers, setPeer] = useState<string[]>([]);
+  const [convos, setConvos] = useState<string[]>([]);
   const [input, setInput] = useState("");
+
+  const navigate = useNavigate();
+
+   
+  const logOut = async () => {
+
+    axios.post("http://localhost:8080/auth/logout",
+        {withCredentials: true},
+
+    )
+    return navigate("/");
+
+    }
 
   return (
     <section className="flex flex-col h-screen bg-gray-50 w-full">
@@ -27,13 +42,15 @@ export default function Home() {
         </form>
       </div>
 
-      {/* Peer List Section */}
+     
       <div className="flex flex-col p-6 space-y-4 overflow-y-auto">
-        {/* Example cards */}
+        
         <Card />
         <Card />
         <Card />
       </div>
+
+      <button className="p-10 bg-red-500 text-white" onClick={logOut}>Log Out</button>
 
     </section>
   );
