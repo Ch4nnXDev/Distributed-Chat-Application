@@ -1,5 +1,5 @@
 
-const connectDB = require('./db/db');
+const connectDB = require('./config/db');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
@@ -7,8 +7,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const bcrypt = require('bcryptjs')
 const userRoutes = require('./routes/routes.js');
-
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const Configpassport = require('./config/passport');
 const express = require('express');
 dotenv.config();
 const app = express();
@@ -19,34 +18,9 @@ connectDB();
 app.use('/user', userRoutes);
 app.use(passport.initialize());
 
+  
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:8080/auth/google/callback'
-
-}, 
-async (accessToken, refreshToken, profile, done) => {
-  try {
-    let user = await User.findOne({ googleId: profile.id });
-
-
-
-    if (!user) {
-      user = new User({
-        googleId: profile.id,
-        email: profile.emails[0].value,
-        photo: profile.photos[0].value,
-
-      });
-      await user.save();
-    }
-    return done(null, user); 
-  } catch (error) {
-    console.error("Google strategy error:", error);
-    return done(error, null);
-  }
-}));
+Configpassport();
 
 app.post('/signup', async(req, res)=> {
   try {
