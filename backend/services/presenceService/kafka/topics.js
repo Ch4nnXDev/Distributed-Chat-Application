@@ -1,6 +1,6 @@
+
 module.exports = {
-    MESSAGE_SENT: "message.send",
-    USER_CREATED: "user.created",
-    USER_ONLINE: "user.online",
-    USER_OFFLINE: "user.offline"
-}
+    CHAT_EVENTS: "chat-events",
+    PRESENCE_EVENTS: "presence-events",
+    USER_EVENTS: "user-events"
+};
