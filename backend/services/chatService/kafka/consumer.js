@@ -18,4 +18,4 @@ const startConsumer = async (topic, handleMessage) => {
     }
 }
 
-module.exports = startConsumer;
+module.exports = startConsumer; 

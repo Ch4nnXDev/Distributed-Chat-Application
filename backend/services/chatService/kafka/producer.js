@@ -21,4 +21,4 @@ const sendMessage = async (topic, message) => {
   }
 };
 
-module.exports = { connectProducer, sendMessage, producer };
+module.exports = { connectProducer, sendMessage };
