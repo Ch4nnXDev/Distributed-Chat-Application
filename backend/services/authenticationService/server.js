@@ -26,8 +26,9 @@ app.post('/signup', async(req, res)=> {
   try {
     const { email, password } = req.body;
     const existingUser = await User.findOne({email});
-    const hashedPassword = await bcrypt.hash(password, 10);
+    
     if (!existingUser) {
+      const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await User.create({email, password: hashedPassword});
       const token = jwt.sign({userId: newUser._id, email: newUser.email}, process.env.JWT_SECRET, {expiresIn: "1d"});
       res.cookie("token", token, {
@@ -66,7 +67,7 @@ app.get('/google/callback',
     (req, res) => {
       const token = jwt.sign({ id: req.user._id, email: req.user.email }, process.env.JWT_SECRET, { expiresIn: '1d' });
       res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax",
-            maxAge: 60 * 60 * 1000 });
+            maxAge: 24 * 60 * 60 * 1000 });
       res.redirect(`http://localhost:5173/search`);
 
     }
