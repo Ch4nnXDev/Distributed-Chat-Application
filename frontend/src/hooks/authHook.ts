@@ -5,4 +5,13 @@ const getMe = async () => {
 
 }
 
-export default getMe;
+
+
+
+const getUsers = async () => {
+    const users = await axios.get("http://localhost:8080/auth/user");
+    return users
+
+}
+
+export default getMe; getUsers;
