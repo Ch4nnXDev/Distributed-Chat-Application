@@ -1,18 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const {connectProducer, sendKafkaMessage} = require("./kafka/producer");
-const {startConsumer} = require("./kafka/consumer");
+const express = require("express");
+const {startConsumer} = require("./kafka/consumer")
+const  {PRESENCE_EVENTS} = require("./kafka/topics")
+const app = express();
 
-router.get("/connect", async (req, res) => {
-    await connectProducer();
-    await startConsumer();
-    res.send("Kafka Connected");
-})
+const PORT = 3000;
 
-router.post("/send", async (req, res) => {
-    const {topic, message} = req.body;
-    await sendKafkaMessage(topic, message);
-    res.send("Message Sent");
-})
+startConsumer(PRESENCE_EVENTS);
 
-module.exports = router;
+
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "Hello Presence Service"
+    });
+});
+
+app.listen(PORT, () => {
+    console.log("Project is Running On", PORT);
+});
+
