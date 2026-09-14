@@ -1,4 +1,4 @@
-import redis from "../config/redisClient";
+const redis = require("../config/redisClient");
 
 const createUser = async (user) => {
     await redis.sAdd("online-users", user);

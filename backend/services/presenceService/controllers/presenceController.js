@@ -1,6 +1,8 @@
-import createUser from "../service/presenceService";
-import getAllUsers from "../service/presenceService";
-import checkOnline from "../services/presenceService";
+const {
+    userOffline,
+    getAllUsers,
+    checkOnline
+} = require("../service/presenceService");
 
 const createUserController = async (req, res) => {
     const {user} = req.user;
@@ -19,4 +21,16 @@ const isOnlineController = async (req, res) => {
     const {user} = req.user;
     return await checkOnline(user)
 
+}
+
+const userOffline = async (req, res) => {
+    return await redisC
+}
+
+
+module.export = {
+    createUserController,
+    getAllUsersController,
+    isOnlineController,
+    userOffline
 }
