@@ -7,10 +7,10 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db.js'); 
 const messageRoutes = require('./routes/messageRoutes'); 
-const { saveMessage } = require('./controllers/messageController');
-const { topic, CHAT_MESSAGES } = require('./kafka/topics');
+const { saveMessage } = require('./controllers/messageDBController');
 const { sendMessage, connectProducer } = require('./kafka/producer.js');
-const cookie = require('cookie');
+const { SocketAuth } = require("./middleware/socketAuth.js")
+const { connectionHandler } = require("./handlers/connectionHandler")
 
 
 dotenv.config();
@@ -53,7 +53,7 @@ app.get('/auth/me', (req, res) => {
 });
 
 const server = http.createServer(app);
-const io = socketIo(server, {
+const io = socketIo(server, { //this is the socket server
   path: "/socket.io",
   cors: {
     origin: [
@@ -65,56 +65,12 @@ const io = socketIo(server, {
   }
 });
 
-io.use((socket, next) => {
-  const parsedCookie = cookie.parse(socket.handshake.headers.cookie || '');
-  const token = parsedCookie.token;
-  console.log("ok", token)
-  if (!token) return next(new Error("No token"));
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded Token:", decoded);
-    socket.user = {
-      id: decoded.id, 
-      email: decoded.email
-    }; 
-    next();
-  } catch (err) {
-    next(new Error("Invalid token"));
-  }
-});
+io.use(SocketAuth);
 
 
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id, 'as', socket.user?.email);
-
-  socket.on('chat_message', async (msg) => {
-
-
-    try {
-      const fullMessage = {
-      text: msg.text,
-      senderId: socket.user.id,
-      senderEmail: socket.user.email,
-      };
-
-      const savedMessage = await saveMessage(fullMessage);
-      io.emit('chat_message', savedMessage);
-
-      
-      console.log("Saved Message:", savedMessage);
-      await sendMessage(CHAT_MESSAGES, savedMessage);
-      console.log("Received msg from client:", msg);
-      
-    } catch (err) {
-      console.log("Error Sending Message", err);
-    }
-    
- 
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
+  
+  connectionHandler(socket, io);
 });
 
 

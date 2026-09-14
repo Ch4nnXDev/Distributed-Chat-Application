@@ -1,6 +1,7 @@
 const { throws } = require('assert');
 const user = require('../models/user');
 
+
 const saveMessage = async (username, password, googleId) => {
     try {
         const newUser = new user({ username, password, googleId });
@@ -15,6 +16,7 @@ const saveMessage = async (username, password, googleId) => {
 }
 
 
+
 const getUser = async(googleId) => {
     try {
         const foundUser = await getUserbyGoogleId(googleId);
@@ -26,6 +28,8 @@ const getUser = async(googleId) => {
         throws(error);  
     }
 }
+
+
 
 const getAllUsers = async() => {
     try {
@@ -41,6 +45,7 @@ const getAllUsers = async() => {
 
     }
 }
+
 
 module.exports = {
     saveMessage,
