@@ -1,10 +1,15 @@
-import { createClient } from 'redis';
+const { createClient } = require("redis");
 
-const redisClient = createClient({url: "redis://localhost:6379"})
+const redisClient = createClient({
+    url: "redis://localhost:6379"
+});
 
+const connectRedis = async () => {
+    await redisClient.connect();
+    console.log("Redis Connected");
+};
 
-export const connectRedis = async () => {
-    return await redisClient.connect();
-}
-
-export default redisClient;
+module.exports = {
+    redisClient,
+    connectRedis
+};
