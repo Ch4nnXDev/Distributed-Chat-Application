@@ -1,7 +1,7 @@
 const kafka = require("./kafkaClient");
 const producer = kafka.producer();
 
-export const connectProducer = async () => {
+const connectProducer = async () => {
     try {
 
         await producer.connect();
@@ -15,7 +15,7 @@ export const connectProducer = async () => {
 }
 
 
-export const sendKafkaMessage = async (topic, message) => {
+const sendKafkaMessage = async (topic, message) => {
     try {
         await producer.send({
             topic,
@@ -28,4 +28,10 @@ export const sendKafkaMessage = async (topic, message) => {
     }
     
 
+}
+
+
+module.exports = {
+    connectProducer,
+    sendKafkaMessage
 }
