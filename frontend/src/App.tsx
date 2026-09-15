@@ -1,39 +1,42 @@
 import ChatLayout from "./components/chatLayout";
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SignUp from "./components/default/Signup";
-import Home from "./components/default/home";
+import Home from "./pages/home";
 import authStore from "./stores/authStore";
-import Profile from "./components/profile";
-
+import ProfilePage from "./pages/profilePage";
+import Layout from "./pages/Layout";
 import { useEffect } from "react";
-
+import FindContactPage from "./pages/findContactPage";
 
 function App() {
-  
-  const fetchUser = authStore((state)=> state.fetchUser);
 
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser])
+    const fetchUser = authStore((state) => state.fetchUser);
 
-  return (
-    <>
-    <Router>
-      <Routes>
-        <Route path="/chat" element={<ChatLayout />} />
-        <Route path="/" element={<SignUp />} />
-        <Route path="/search" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
-        
-      </Routes>
-    </Router>
-      
-      
+    useEffect(() => {
+        fetchUser();
+    }, [fetchUser]);
 
-     
-      
-    </>
-  )
+    return (
+        <Router>
+            <Routes>
+
+                <Route element={<Layout />}>
+
+                    <Route path="/chat" element={<ChatLayout />} />
+
+                    <Route path="/" element={<SignUp />} />
+
+                    <Route path="/chats" element={<Home />} />
+
+                    <Route path="/profile" element={<ProfilePage />} />
+
+                    <Route path="/new" element={<FindContactPage />} />
+
+                </Route>
+
+            </Routes>
+        </Router>
+    );
 }
 
-export default App
+export default App;
