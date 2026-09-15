@@ -1,10 +1,7 @@
 const kafka = require("./kafkaClient");
 const {
-    createUserController,
-    getAllUsersController,
-    isOnlineController,
-    userOffline
-} = require("../controllers/presenceController");
+createUser, userOffline
+} = require("../service/presenceService");
 
 const consumer = kafka.consumer({
     groupId: "presence-group"
@@ -31,7 +28,14 @@ const startConsumer = async (topic) => {
                 );
                 switch (data.type) {
                     case "USER_ONLINE":
-                        await createUserController(data.userId)
+                        await createUser(data.userId);
+                        break;
+                    case "USER_OFFLINE":
+                        await userOffline(data.userId);
+                        break;
+
+                    default:
+                        console.log("Unknown event type:", data.type);
                 }
 
                 console.log("Received event:", data);
