@@ -9,8 +9,9 @@ const connectDB = require('./config/db.js');
 const messageRoutes = require('./routes/messageRoutes'); 
 const { saveMessage } = require('./controllers/messageDBController');
 const { sendMessage, connectProducer } = require('./kafka/producer.js');
-const { SocketAuth } = require("./middleware/socketAuth.js")
-const { connectionHandler } = require("./handlers/connectionHandler")
+const { SocketAuth } = require("./middleware/socketAuth.js");
+const { connectionHandler } = require("./handlers/connectionHandler");
+const cookieParser = require("cookie-parser");
 
 
 dotenv.config();
@@ -30,7 +31,7 @@ app.use(cors({
 }));
 
 app.use(bodyParser.json());
-
+app.use(cookieParser());
 // Connect to Database
 connectDB();
 connectProducer();
