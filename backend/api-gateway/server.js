@@ -22,8 +22,8 @@ app.get('/', (req, res) => res.send('API Gateway running ✅'));
 // ---- AUTH SERVICE ----
 app.use('/auth', createProxyMiddleware({
   target: 'http://authenticationservice:4000',
-  changeOrigin: true,
   pathRewrite: { '^/auth': '' },
+  changeOrigin: true,
   onProxyReq: (proxyReq, req) => {
     if (req.cookies?.token) {
       proxyReq.setHeader('Authorization', `Bearer ${req.cookies.token}`);

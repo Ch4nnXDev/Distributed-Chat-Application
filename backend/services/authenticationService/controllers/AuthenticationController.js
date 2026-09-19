@@ -1,53 +1,138 @@
-const { throws } = require('assert');
-const user = require('../models/user');
+const { signup } = require("../service/authService");
+const jwt = require("jsonwebtoken");
+
+const {
+    saveUser,
+    getUserByGoogleId,
+    getAllUsers
+} = require("../service/userDBService");
+
+const { AppError } = require("../error/appError");
 
 
-const saveMessage = async (username, password, googleId) => {
+
+const signUpController = async (req, res, next) => {
     try {
-        const newUser = new user({ username, password, googleId });
-        const savedUser = await newUser.save();
-        console.log("Saved user to DB:", savedUser);
-        return savedUser;
+        const { email, password } = req.body;
+
+        const token = await signup(email, password);
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 15 * 60 * 1000
+        });
+
+        res.status(201).json({
+            message: "User created"
+        });
+
     } catch (error) {
-        console.error("Error saving user:", error);
-        throw error; 
+        next(error);
     }
-
-}
-
+};
 
 
-const getUser = async(googleId) => {
+
+const logoutController = (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax"
+    });
+
+    res.status(200).json({
+        message: "Logged out"
+    });
+};
+
+
+
+const saveUserController = async (req, res, next) => {
     try {
-        const foundUser = await getUserbyGoogleId(googleId);
-        if (!foundUser) {
-            throw new Error("User not found");
+        const savedUser = await saveUser(req.body);
+
+        res.status(201).json({
+            message: "User saved",
+            user: savedUser
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+const getUserByGoogleIdController = async (req, res, next) => {
+    try {
+        const { googleId } = req.params;
+
+        const user = await getUserByGoogleId(googleId);
+
+        if (!user) {
+            throw new AppError("User not found", 404);
         }
-        return foundUser;
+
+        res.status(200).json({
+            user
+        });
+
     } catch (error) {
-        throws(error);  
+        next(error);
     }
-}
+};
 
 
 
-const getAllUsers = async() => {
+const getAllUsersController = async (req, res, next) => {
     try {
-        const users = await user.find({});
-        if (!users) {
-            throw new Error("No users found");
-        }
-        return users;
+        const users = await getAllUsers();
+
+        res.status(200).json({
+            users
+        });
 
     } catch (error) {
-        console.log("Error fetching users:", error);
-        throws(error);
-
+        next(error);
     }
-}
+};
+
+const googleCallbackController = (req, res, next) => {
+    try {
+        const token = jwt.sign(
+            {
+                sub: req.user._id.toString()
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "15m",
+                issuer: "auth-service",
+                audience: "chat-service"
+            }
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 15 * 60 * 1000
+        });
+
+        res.redirect("http://localhost:5173/chats");
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 
 module.exports = {
-    saveMessage,
-    getUser
+    signUpController,
+    logoutController,
+    saveUserController,
+    getUserByGoogleIdController,
+    getAllUsersController,
+    googleCallbackController
 };
