@@ -1,4 +1,4 @@
-const jwt = require("jasonwebtoken")
+const jwt = require("jsonwebtoken")
 
 const authenticate = async (req, res, next) => {
     try {
@@ -22,13 +22,13 @@ const authenticate = async (req, res, next) => {
         req.user = decode;
         next();
 
-        
-
-
 
     } catch (error) {
         next(error)
     }
- 
     
 }
+
+
+
+module.exports = authenticate;
