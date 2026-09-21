@@ -39,6 +39,8 @@ export default function ChatWindow(){
 
         })
 
+        
+
 
         return () => {
             if (socketRef.current) { //if statement is needed because socketRef.current can be null 
@@ -46,6 +48,7 @@ export default function ChatWindow(){
             }
         }; // Connect to the socket server
     }, []);
+
 
     useEffect(() => {
         const fetchMessages = async () => {
