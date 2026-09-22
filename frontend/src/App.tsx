@@ -19,13 +19,12 @@ function App() {
     return (
         <Router>
             <Routes>
+                
+                <Route path="/" element={<SignUp />} />
+                <Route path="/chat" element={<ChatLayout />} />   
 
                 <Route element={<Layout />}>
-
-                    <Route path="/chat" element={<ChatLayout />} />
-
-                    <Route path="/" element={<SignUp />} />
-
+                
                     <Route path="/chats" element={<Home />} />
 
                     <Route path="/profile" element={<ProfilePage />} />
