@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
 import authStore from "../../stores/authStore";
+import { socket } from "../default/socket";
+
 export default function ChatWindow(){
 
     type Message = {
@@ -27,14 +29,8 @@ export default function ChatWindow(){
         
     useEffect(() => {
 
-        socketRef.current = io("http://localhost:8080", {
-            path: "/chat/socket.io",
-            withCredentials: true,
-           
-            transports: ["websocket"]
-        });
 
-        socketRef.current.on('chat_message', (msg)=>{
+        socket.on('chat_message', (msg)=>{
             setMessages((prevMessages) => [...prevMessages, msg]); // Update messages state with new message
 
         })
