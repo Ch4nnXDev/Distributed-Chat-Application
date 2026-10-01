@@ -8,14 +8,15 @@ const messageHandler = (socket, io) => {
     socket.on("chat_message", async (msg) => {
         try {
             const fullMessage = {
+                conversationId: msg.conversationId,
                 text: msg.text,
                 senderId: socket.user.id,
-                senderEmail: socket.user.email,
+                
             };
 
             const savedMessage = await saveMessage(fullMessage);
 
-            io.emit("chat_message", savedMessage);
+            io.to(msg.conversationId).emit("chat_message", savedMessage);
 
             console.log("Saved Message:", savedMessage);
 
