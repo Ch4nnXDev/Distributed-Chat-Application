@@ -166,10 +166,10 @@ export default function ProfilePage() {
                     </div>
                 </div>
 
-                {/* Logout */}
+\
                 <div className="mt-4 rounded-lg border border-gray-200 bg-white p-6">
 
-                    <button className="flex items-center gap-2 text-red-500 hover:text-red-600">
+                    <button className="flex items-center gap-2 text-red-500 hover:text-red-600" onClick={() => {navigate("/")}}>
                         <LogOut size={20} />
                         Log Out
                     </button>

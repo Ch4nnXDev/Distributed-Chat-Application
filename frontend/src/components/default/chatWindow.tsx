@@ -1,6 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
-import { io } from "socket.io-client";
+import { useState, useEffect} from "react";
 import axios from "axios";
 import authStore from "../../stores/authStore";
 import { socket } from "../default/socket";
@@ -8,6 +7,7 @@ import { socket } from "../default/socket";
 export default function ChatWindow(){
 
     type Message = {
+        _id: string;
         text: string;  
         senderId: string;
         senderEmail?: string;
@@ -15,13 +15,22 @@ export default function ChatWindow(){
 
     };
 
+    function mergeMessages(
+        existingMessages: Message[],
+        incomingMessages: Message[]
+    ) {
+        const allMessages = new Map<string, Message>();
+        
+
+
+    }
+
     
 
 
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
-    const socketRef = useRef<ReturnType<typeof io> | null>(null);
     const currentUser = authStore((state) => state.user);
     
     
@@ -30,19 +39,23 @@ export default function ChatWindow(){
     useEffect(() => {
 
 
-        socket.on('chat_message', (msg)=>{
-            setMessages((prevMessages) => [...prevMessages, msg]); // Update messages state with new message
+        const handleMessage = (msg: Message) => {
 
-        })
 
-        
+            console.log("SOCKET MESSAGE RECEIVED:", msg);
 
+            setMessages(prevMessages => [
+                ...prevMessages,
+                msg
+            ]);
+        }
+
+            socket.on("chat_message", handleMessage);
 
         return () => {
-            if (socketRef.current) { //if statement is needed because socketRef.current can be null 
-                socketRef.current.disconnect(); // Clean up the socket connection on unmount
-            }
-        }; // Connect to the socket server
+            socket.off("chat_message", handleMessage)
+        }
+
     }, []);
 
 
@@ -77,8 +90,8 @@ export default function ChatWindow(){
         
 
 
-        if (socketRef.current) {
-            socketRef.current.emit("chat_message", {text: input});
+        if (socket) {
+            socket.emit("chat_message", {text: input});
         }
 
         setInput(""); //this clears the input field after submitting

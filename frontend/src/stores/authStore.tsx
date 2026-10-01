@@ -7,7 +7,7 @@ type AuthState = {
     loggedIn: boolean;
     setUser: (user: string) => void;
     setLoggedIn: (loggedIn: boolean) => void;
-    fetchUser: () => Promise<void>;
+    fetchUser: () => Promise<string>;
 
 }
 
@@ -18,7 +18,9 @@ const authStore = create<AuthState>((set)=> ({
     setLoggedIn: (loggedIn) => set({ loggedIn }),
     fetchUser: async () => {
         const data = await getMe();
-        set({ user: data.data.id });
+        const userId = data.data.id
+        set({ user: userId });
+        return userId;
     }
 }))
 

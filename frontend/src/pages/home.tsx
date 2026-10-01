@@ -1,10 +1,23 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import Card from "../components/contactCard.tsx";
 
+type Conversation = {
+    name: string,
+    
+}
+
 export default function Home() {
     const [input, setInput] = useState("");
+    const [conversations, setConversations] = useState<Conversation[]>([]);
+    
+
+
+    useEffect(() => {
+
+
+    }, [conversations]);
 
     return (
         <section className="min-h-screen w-full bg-gray-50 p-6">

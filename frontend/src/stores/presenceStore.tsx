@@ -16,6 +16,7 @@ const PresenceStore = create<PresenceState>((set) => ({
                 ...state.users,
                 [userId]: status
             }
+            
         }));
     }
 }));
