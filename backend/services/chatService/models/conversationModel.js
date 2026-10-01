@@ -5,15 +5,9 @@ const {required} = require('@hapi/joi');
 const conversationModel = new mongoose.Schema({
     participants: {
         type: [mongoose.Schema.Types.ObjectId],
-        ref: "User",
         required: true
     },
 
-    texts: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: "Message",
-        required: false
-    }
 
 
 
