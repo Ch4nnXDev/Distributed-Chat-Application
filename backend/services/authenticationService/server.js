@@ -7,7 +7,7 @@ const connectDB = require("./config/db");
 const Configpassport = require("./config/passport");
 
 const authRoutes = require("./routes/authRoutes");
-
+const internalUserRoutes = require("./routes/internalUserRoutes");
 
 const { errorHandler } = require("./error/errorHandler");
 
@@ -25,7 +25,7 @@ Configpassport();
 
 
 app.use("/", authRoutes);
-
+app.use("/internal", internalUserRoutes);
 
 
 app.use(errorHandler);
