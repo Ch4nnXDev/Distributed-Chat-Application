@@ -1,11 +1,12 @@
-const { messageHandler } = require("./messageHandler")
-const { presenceHandler } = require("./connectionHandler");
+const { messageHandler } = require("./messageHandler");
+const presenceHandler  = require("./presenceHandler");
+const { conversationHandler } = require("./conversationHandler")
 
 
 
 const connectionHandler = async (socket, io) => {
 
-    console.log('User connected:', socket.user.id, 'as', socket.user?.email);
+    console.log('User connected:', socket.user.id);
 
     const userId = socket.user.id;
 
@@ -17,6 +18,7 @@ const connectionHandler = async (socket, io) => {
 
     
     messageHandler(socket, io);
+    conversationHandler(socket, io);
 
     socket.on('disconnect', async () => {
         console.log('User disconnected:', socket.id);

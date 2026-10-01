@@ -7,11 +7,12 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db.js'); 
 const messageRoutes = require('./routes/messageRoutes'); 
-const { saveMessage } = require('./controllers/messageDBController');
 const { sendMessage, connectProducer } = require('./kafka/producer.js');
 const { SocketAuth } = require("./middleware/socketAuth.js");
 const { connectionHandler } = require("./handlers/connectionHandler");
+const conversationRoutes = require('./routes/conversationRoutes.js');
 const cookieParser = require("cookie-parser");
+const authenticate = require('./middleware/authenticate.js');
 
 
 dotenv.config();
@@ -37,6 +38,7 @@ connectDB();
 connectProducer();
 // Routes
 app.use('/api', messageRoutes);
+app.use('/api/conversations', conversationRoutes);
 
 app.get('/auth/me', (req, res) => {
   const token = req.cookies.token;
@@ -52,6 +54,9 @@ app.get('/auth/me', (req, res) => {
   
 
 });
+
+app.use(authenticate);
+
 
 const server = http.createServer(app);
 const io = socketIo(server, { //this is the socket server

@@ -1,7 +1,27 @@
+const Conversation = require("../models/conversationModel.js");
+
 const conversationHandler = (socket, io) => {
 
     socket.on("join_conversation", async (conversationId) => {
         try {
+
+            const conversation = await Conversation.findById(conversationId);
+            if (!conversation) {
+                console.error("Conversation not found:", conversationId);
+                socket.emit("conversation_error", {
+                    error: "Conversation not found"
+                });
+                return;
+            }
+            const isParticipant = conversation.participants.some(
+                participantId =>
+                    participantId.toString() === socket.user.id.toString()
+            );
+
+            if (!isParticipant) {
+                console.error("User is not a participant of the conversation:", socket.user.id);
+                return;
+            }
 
             socket.join(conversationId);
 
@@ -11,6 +31,10 @@ const conversationHandler = (socket, io) => {
 
         } catch (err) {
             console.error("Error joining the conversation", err);
+            socket.emit("conversation_error", {
+
+                error: "Failed to join conversation"
+            });
         }
     });
 
