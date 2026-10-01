@@ -7,7 +7,7 @@ const authenticate = async (req, res, next) => {
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return next(new Error("Authetication is Missing"))
         }
-        const token = authHeader.split("")[1];
+        const token = authHeader.split(" ")[1];
         const decode = jwt.verify(
             token,
             process.env.JWT_SECRET,

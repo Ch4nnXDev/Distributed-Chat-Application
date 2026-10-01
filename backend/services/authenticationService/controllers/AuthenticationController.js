@@ -128,11 +128,21 @@ const googleCallbackController = (req, res, next) => {
 };
 
 
+const getMe = async (req, res) => {
+    res.status(200).json({
+        id: req.user.sub
+    })
+}
+
+
 module.exports = {
+
+    getMe,
     signUpController,
     logoutController,
     saveUserController,
     getUserByGoogleIdController,
     getAllUsersController,
     googleCallbackController
+    
 };
