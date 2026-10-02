@@ -8,7 +8,7 @@ const authenticate = async (req, res, next) => {
             return next(new Error("Authetication is Missing"))
         }
         const token = authHeader.split(" ")[1];
-        const decode = jwt.verify(
+        const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET,
             {
@@ -16,7 +16,7 @@ const authenticate = async (req, res, next) => {
                 audience: "chat-service"
             }
         )
-        req.user = decode;
+        req.user = { id: decoded.sub };
         next();
     } catch (error) {
         next(error)

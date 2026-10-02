@@ -3,64 +3,72 @@ const authServiceClient = require('../service/authServiceClient');
 
 const createConversation = async (req, res) => {
     try {
-        const { participants } = req.body;
+
         const newConversation = new conversation({
-            participants: participants
-        })
+            participants: [req.user.id],
+            createdBy: req.user.id
+        });
+
         await newConversation.save();
-        res.status(201).json({ message: "Conversation created" });
-        
+
+        res.status(201).json(newConversation);
 
     } catch (error) {
         console.log("Error creating conversation", error);
-        res.status(500).json({ error: "Failed to create conversation" });
+        res.status(500).json({
+            error: "Failed to create conversation"
+        });
     }
-}
+};
 
 const getConversations = async (req, res) => {
     try {
-        const conversations = await conversation.find().populate('participants');
+        const conversations = await conversation.find({
+            participants: req.user.id
+        });
+
         res.status(200).json(conversations);
+
     } catch (error) {
         console.log("Error fetching conversations", error);
-        res.status(500).json({ error: "Failed to Fetch Conversations"});
+        res.status(500).json({
+            error: "Failed to fetch conversations"
+        });
     }
-}
+};
 
 const getConversation = async (req, res) => {
     try {
         const { conversationId } = req.params;
-        const conversationData = await conversation.findById(conversationId).populate('participants');
+
+        const conversationData = await conversation.findOne({
+            _id: conversationId,
+            participants: req.user.id
+        });
+
         if (!conversationData) {
-            return res.status(404).json({ error: "Conversation not found" });
+            return res.status(404).json({
+                error: "Conversation not found"
+            });
         }
+
         res.status(200).json(conversationData);
+
     } catch (error) {
         console.log("Error fetching conversation", error);
-        res.status(500).json({ error: "Failed to Fetch Conversation"});
+        res.status(500).json({
+            error: "Failed to fetch conversation"
+        });
     }
-}
-
-
-const updateConversation = async (req, res) => {
-    try {
-        const { conversationId } = req.params;
-        const { participants } = req.body;
-        const updatedConversation = await conversation.findByIdAndUpdate(conversationId, { participants }, { new: true });
-        if (!updatedConversation) {
-            return res.status(404).json({ error: "Conversation not found" });
-        }
-        res.status(200).json(updatedConversation);
-    } catch (error) {
-        console.log("Error updating conversation", error);
-        res.status(500).json({ error: "Failed to Update Conversation"});
-    }
-}
+};
 
 const deleteConversation = async (req, res) => {
     try {
         const { conversationId } = req.params;
-        const deletedConversation = await conversation.findByIdAndDelete(conversationId);
+        const deletedConversation = await conversation.findOneAndDelete({
+            _id: conversationId,
+            createdBy: req.user.id
+        });
         if (!deletedConversation) {
             return res.status(404).json({ error: "Conversation not found" });
         }
@@ -73,8 +81,11 @@ const deleteConversation = async (req, res) => {
 
 const addParticipant = async (req, res) => {
     try {
-        const { conversationId, userId} = req.params;
-        const conversationData = await conversation.findById(conversationId);
+        const { conversationId, userId } = req.params;
+        const conversationData = await conversation.findOne({
+            _id: conversationId,
+            createdBy: req.user.id
+        });
         if (!conversationData) {
             return res.status(404).json({ error: "Conversation not found" });
         }
@@ -82,7 +93,9 @@ const addParticipant = async (req, res) => {
         if (!userExist) {
             return res.status(404).json({ error: "User not found" });
         }
-        const conversationHasUser = conversationData.participants.includes(userId);
+        const conversationHasUser = conversationData.participants.some(
+            participantId => participantId.toString() === userId
+        );
         if (conversationHasUser) {
             return res.status(400).json({ error: "User already in conversation" });
         }
@@ -98,7 +111,10 @@ const addParticipant = async (req, res) => {
 const removeParticipant = async (req, res) => {
     try {
         const { conversationId, userId } = req.params;
-        const conversationData = await conversation.findById(conversationId);
+        const conversationData = await conversation.findOne({
+            _id: conversationId,
+            createdBy: req.user.id
+        });
         if (!conversationData) {
             return res.status(404).json({ error: "Conversation not found" });
         }
@@ -106,7 +122,9 @@ const removeParticipant = async (req, res) => {
         if (!userExist) {
             return res.status(404).json({ error: "User not found" });
         }
-        const conversationHasUser = conversationData.participants.includes(userId);
+        const conversationHasUser = conversationData.participants.some(
+            participantId => participantId.toString() === userId
+        );
         if (!conversationHasUser) {
             return res.status(400).json({ error: "User not in conversation" });
         }
@@ -122,7 +140,6 @@ module.exports = {
     getConversations,
     createConversation,
     getConversation,
-    updateConversation,
     deleteConversation,
     addParticipant,
     removeParticipant

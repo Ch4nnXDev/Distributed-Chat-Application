@@ -5,7 +5,9 @@ const conversationHandler = (socket, io) => {
     socket.on("join_conversation", async (conversationId) => {
         try {
 
-            const conversation = await Conversation.findById(conversationId);
+            const conversation = await Conversation.findById(
+                { _id: conversationId, participants: socket.user.id }
+            );
             if (!conversation) {
                 console.error("Conversation not found:", conversationId);
                 socket.emit("conversation_error", {
@@ -20,6 +22,9 @@ const conversationHandler = (socket, io) => {
 
             if (!isParticipant) {
                 console.error("User is not a participant of the conversation:", socket.user.id);
+                socket.emit("conversation_error", {
+                    error: "User is not a participant of the conversation"
+                });
                 return;
             }
 

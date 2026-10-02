@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {required} = require('@hapi/joi');
+
 
 
 const conversationModel = new mongoose.Schema({
@@ -7,6 +7,10 @@ const conversationModel = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         required: true
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    }
 
 
 

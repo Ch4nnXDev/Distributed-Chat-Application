@@ -1,46 +1,17 @@
-const {PRESENCE_EVENT} = require("../kafka/topics");
-const producer = require("../kafka/producer");
-
+const { PRESENCE_EVENTS } = require("../kafka/topics");
+const { sendMessage } = require("../kafka/producer");
 
 const presenceHandler = async (data) => {
+    const { userId, status } = data;
 
-    const {userId, status} = data;
-
-    if (status === "online") {
-
-        return await producer.send(
-            {
-                topic: PRESENCE_EVENT,
-                messages: [
-                    {
-                        value: JSON.stringify({
-                            userId,
-                            status: "online"
-                        })
-                    }
-                ]
-            }
-        )
-
+    if (status !== "online" && status !== "offline") {
+        return;
     }
 
-    if (status === "offline") {
-        return await producer.send({
-            topic: PRESENCE_EVENT,
-            messages: [
-                {
-                    value: JSON.stringify({
-                        userId,
-                        status: "offline"
-                    })
-                }
-            ]
-        })
-    }
-
-
-}
-
-
+    await sendMessage(PRESENCE_EVENTS, {
+        userId,
+        status
+    });
+};
 
 module.exports = presenceHandler;

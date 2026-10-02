@@ -1,5 +1,5 @@
 const express = require('express');
-const http = require('http');                                                //The Connection happens first and then the token verification happens on the retry so there is a problem in my setup.
+const http = require('http');                                               
 const socketIo = require('socket.io');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -27,35 +27,32 @@ app.use(cors({
     'http://localhost:5173',      // Frontend
     'http://localhost:8080'       // API Gateway
   ],
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true
 }));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+
 // Connect to Database
 connectDB();
 connectProducer();
+
+
+
 // Routes
-app.use('/api', messageRoutes);
-app.use('/api/conversations', conversationRoutes);
+app.use('/api', authenticate, messageRoutes);
+app.use('/api/conversations', authenticate, conversationRoutes);
 
-app.get('/auth/me', (req, res) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.status(401).json({ error: "No token provided"});
-  }
-
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+app.get('/auth/me', authenticate, (req, res) => {
   res.json({
-    id: decoded.id,
-    email: decoded.email
+    id: req.user.id
   });
   
 
 });
 
-app.use(authenticate);
+
 
 
 const server = http.createServer(app);
@@ -66,7 +63,7 @@ const io = socketIo(server, { //this is the socket server
       'http://localhost:5173',
       'http://localhost:8080'
     ],
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true
   }
 });
