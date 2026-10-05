@@ -1,5 +1,5 @@
-const { getUserById } = require("../services/internalUserService");
-const { AppError } = require("../../../utils/errorHandler");
+const { getUserById } = require("../service/userDBService");
+const { AppError } = require("../error/AppError");
 
 const getInternalUserById = async (req, res, next) => {
     try {
