@@ -1,7 +1,7 @@
 #Base image
 FROM node:20
 # create app directory
-WORKDIR /backend
+WORKDIR /app
 # copy all the packages
 COPY package*.json ./
 # install dependencies
