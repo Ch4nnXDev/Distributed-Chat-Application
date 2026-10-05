@@ -1,10 +1,12 @@
-
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import Card from "../components/contactCard.tsx";
 
 type Conversation = {
     name: string,
+    time: string,
+    lastMessage: string
     
 }
 
@@ -15,7 +17,13 @@ export default function Home() {
 
 
     useEffect(() => {
-
+        axios.get("http://localhost:3000/api/conversations")
+            .then((response) => {
+                setConversations(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching conversations:", error);
+            });
 
     }, [conversations]);
 
@@ -79,17 +87,21 @@ export default function Home() {
                         </div>
 
                         <span className="text-xs text-gray-400">
-                            5 conversations
+                            no conversations
                         </span>
                     </div>
 
                     {/* Chat List */}
                     <div className="divide-y divide-gray-100">
-                        <Card />
-                        <Card />
-                        <Card />
-                        <Card />
-                        <Card />
+                        {conversations.map((conversation, index) => (
+                            <Card
+                                key={index}
+                                name={conversation.name}
+                                lastMessage={conversation.lastMessage}
+                                time={conversation.time}
+                            />
+                        ))}
+
                     </div>
 
                 </div>

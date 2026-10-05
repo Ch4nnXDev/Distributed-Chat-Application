@@ -1,4 +1,12 @@
-export default function Card() {
+
+interface CardProps {
+  name: string;
+  lastMessage: string;
+  time: string
+}
+
+
+export default function Card({ name, lastMessage, time }: CardProps) {
   return (
     <div className="flex items-center p-4 bg-white rounded-lg shadow hover:bg-gray-100 transition-colors cursor-pointer w-full">
       {/* Avatar */}
@@ -8,13 +16,13 @@ export default function Card() {
 
       {/* Contact Info */}
       <div className="ml-4 flex flex-col flex-1">
-        <span className="text-gray-900 font-semibold text-md">Alice Johnson</span>
-        <span className="text-gray-500 text-sm truncate">Hey, are you available for a quick chat?</span>
+        <span className="text-gray-900 font-semibold text-md">{name}</span>
+        <span className="text-gray-500 text-sm truncate">{lastMessage}</span>
       </div>
 
       {/* Status / Time */}
       <div className="text-gray-400 text-xs">
-        2:30 PM
+        {time}
       </div>
     </div>
   );
