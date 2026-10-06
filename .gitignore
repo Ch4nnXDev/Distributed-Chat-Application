@@ -1,6 +1,9 @@
 # Ignore frontend and backend node_modules
 frontend/node_modules/
+backend/services/*/node_modules/
 backend/node_modules/
+backend/api-gateway/node_modules/
+
 
 # Ignore environment and build files
 **/.env
