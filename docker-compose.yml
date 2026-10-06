@@ -3,12 +3,12 @@ services:
 
 
   api-gateway:
-    build: ./backend
-    command: npm run dev:gateway
+    build: ./backend/api-gateway
+    command: npm run dev
     ports:
       - "8080:8080"
     volumes:
-      - ./backend:/app
+      - ./backend/api-gateway:/app
       - /app/node_modules
     depends_on:
       - authenticationservice
@@ -17,32 +17,61 @@ services:
 
 
   authenticationservice:
-    build: ./backend
-    command: npm run dev:auth
+    build: ./backend/services/authenticationService
+    command: npm run dev
     ports:
       - "4000:4000"
     volumes:
-      - ./backend:/app
+      - ./backend/services/authenticationService:/app
       - /app/node_modules
     depends_on:
       - mongodb
+      - kafka
     env_file:
       - ./backend/services/authenticationService/.env
 
 
 
   chatservice:
-    build: ./backend
-    command: npm run dev:chat
+    build: ./backend/services/chatService
+    command: npm run dev
     ports:
       - "4001:4001"
     volumes:
-      - ./backend:/app
+      - ./backend/services/chatService:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+      - kafka
+    env_file:
+      - ./backend/services/chatService/.env
+
+  notificationservice:
+    build: ./backend/services/notificationService
+    command: npm run dev
+    ports:
+      - "4002:4002"
+    volumes:
+      - ./backend/services/notificationService:/app
       - /app/node_modules
     depends_on:
       - mongodb
     env_file:
-      - ./backend/services/chatService/.env
+      - ./backend/services/notificationService/.env
+
+  presenceservice:
+    build: ./backend/services/presenceService
+    command: npm run dev
+    ports:
+      - "4003:4003"
+    volumes:
+      - ./backend/services/presenceService:/app
+      - /app/node_modules
+    depends_on:
+      - mongodb
+      - kafka
+    env_file:
+      - ./backend/services/presenceService/.env
 
 
 
