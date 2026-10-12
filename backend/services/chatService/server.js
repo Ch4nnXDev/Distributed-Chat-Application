@@ -51,6 +51,15 @@ app.get('/auth/me', authenticate, (req, res) => {
 
 });
 
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok",
+        service: "api-gateway",
+        uptime: process.uptime()
+    });
+});
+
+
 
 
 
