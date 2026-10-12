@@ -13,6 +13,7 @@ services:
     depends_on:
       - authenticationservice
       - chatservice
+    
 
 
 
@@ -29,6 +30,13 @@ services:
       - kafka
     env_file:
       - ./backend/services/authenticationService/.env
+
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000/health', (res) => { if (res.statusCode !== 200) { process.exit(1); } })"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 15s
 
 
 
