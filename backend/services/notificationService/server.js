@@ -14,7 +14,6 @@ connectDB();
 app.use('/api/notifications', notificationsRoutes);
 const PORT = process.env.PORT;
 
-
 app.listen(PORT, () => {
     console.log('Notifications Server has Started on PORT');
 });
