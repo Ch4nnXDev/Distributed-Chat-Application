@@ -10,9 +10,13 @@ services:
     volumes:
       - ./backend/api-gateway:/app
       - /app/node_modules
+    environment:
+      OTEL_SERVICE_NAME: api-gateway
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://otel-collector:4318/v1/traces
     depends_on:
       - authenticationservice
       - chatservice
+      - otel-collector
     
 
 
@@ -119,6 +123,24 @@ services:
 
       KAFKA_LOG_DIRS: "/var/lib/kafka/data"
 
+  
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4318:4318"
+    depends_on:
+      - jaeger
+    restart: unless-stopped
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.76.0
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    restart: unless-stopped
 
 
 volumes:
