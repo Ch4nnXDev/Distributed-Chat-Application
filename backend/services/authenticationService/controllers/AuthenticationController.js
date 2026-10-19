@@ -7,7 +7,7 @@ const {
     getAllUsers
 } = require("../service/userDBService");
 
-const { AppError } = require("../error/appError");
+const { AppError } = require("../error/AppError");
 
 
 
